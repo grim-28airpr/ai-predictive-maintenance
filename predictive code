@@ -1,0 +1,54 @@
+import pandas as pd
+
+# STEP 1: LOAD DATASET
+
+df = pd.read_csv("data/predictive_maintenance_dataset.csv")
+
+print("Dataset Loaded Successfully\n")
+print(df.head())
+
+
+# STEP 2: CLEAN DATA
+
+# Remove unnecessary columns if present
+if "UDI" in df.columns:
+    df = df.drop(columns=["UDI"])
+
+if "Product ID" in df.columns:
+    df = df.drop(columns=["Product ID"])
+
+
+# STEP 3: HANDLE CATEGORICAL DATA
+
+# Convert Type (L, M, H) into numbers
+if "Type" in df.columns:
+    df["Type"] = df["Type"].map({"L": 0, "M": 1, "H": 2})
+
+# STEP 4: DEFINE FEATURES
+
+features = [
+    "Air temperature [K]",
+    "Process temperature [K]",
+    "Rotational speed [rpm]",
+    "Torque [Nm]",
+    "Tool wear [min]"
+]
+
+X = df[features]
+
+# STEP 5: TARGET VARIABLE
+
+# Use machine failure column if present
+if "Machine failure" in df.columns:
+    y = df["Machine failure"]
+else:
+    y = None  # for unsupervised case
+
+print("\nFeatures ready:")
+print(X.head())
+
+# OPTIONAL: SAVE CLEAN DATA
+# -----------------------------
+df.to_csv("data/cleaned_data.csv", index=False)
+
+print("\nCleaned dataset saved as cleaned_data.csv")
